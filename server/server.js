@@ -1,22 +1,40 @@
+// Instantiating Express
+var express = require('express');
+var app = express();
+
+// Request makes HTTP Requests
 var request = require('request');
+
+// Morgan logs all requests
+var morgan = require('morgan');
+
 var bodyParser = require('body-parser');
 
-var domify = require('domify');
+//Middleware
+app.use(morgan('dev'))
 
-var jsdom = require('jsdom');
-const { JSDOM } = jsdom;
+// Not 100% sure this connected successfully
+console.log(__dirname + '/../src')
+app.use(express.static(__dirname + '/../src'));
 
-const cheerio = require('cheerio')
-
-var DOMParser = require('xmldom').DOMParser;
-var parser = new DOMParser();
-
-var mapDom = require("map-dom");
-
-var htmlToJson = require('html-to-json')
 
 var url = "https://losangeles.craigslist.org/search/cta?query=nsx&srchType=T&auto_transmission=1";
 var testUrl = "https://jsonplaceholder.typicode.com/posts"
+// var domify = require('domify');
+
+// var jsdom = require('jsdom');
+// const { JSDOM } = jsdom;
+
+// const cheerio = require('cheerio')
+
+// var DOMParser = require('xmldom').DOMParser;
+// var parser = new DOMParser();
+
+// var mapDom = require("map-dom");
+
+// var htmlToJson = require('html-to-json')
+
+
 //<li class="result-row" data-pid="6250956028" data-repost-of="6165135493">
 
 
@@ -35,6 +53,14 @@ var testUrl = "https://jsonplaceholder.typicode.com/posts"
 
 
 
+
+
+
+var port = 8008;
+
+app.listen(port, function() {
+  console.log("Listening on port " + port);
+})
 
 
 //-----------------------------------------------First Try-----------------------------------------
