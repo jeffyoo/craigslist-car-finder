@@ -2,13 +2,12 @@
 var xhr = new XMLHttpRequest();
 var parser = new DOMParser();
 
-var url = "https://losangeles.craigslist.org/search/cta?query=nsx&srchType=T&auto_transmission=1";
+var baseUrl = "https://losangeles.craigslist.org";
+var url = "https://losangeles.craigslist.org/search/cta?query=nsx&srchType=T&bundleDuplicates=1&auto_transmission=1";
 
 var results = [];
 
 function ajaxCall() {
-	var id, title, price;
-
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			var array = [];
@@ -17,27 +16,36 @@ function ajaxCall() {
 			var datapidArr = craigslistSearch.querySelectorAll('[data-pid]');
 
 			datapidArr.forEach(function(e, i) {
-				// console.log(e.getAttribute("data-pid"))
-				// var test = e.getAttribute("data-repost-of");
-				// if (test !== undefined) {
-				// 	console.log(test)
-				// }
 				if (e.tagName == "LI") {
 					array.push(e);
 				}
 			})
 
-			
-
-
 			array.forEach(function(e, i) {
 			// get all the data we need and push to array like results.push({id: id, title: title, etc.})
-			
-			
 				console.log(e)
-				console.log(e.getAttribute("data-repost-of"))
-				if (e.getAttribute("data-repost-of") !== null) {
-
+				var id, title, price, date, link; //mileage
+				var city = "Los Angeles"; //use what's currently in the for loop when i have a city array, temp just LA
+				var imgUrls = [];
+				//opt state
+				
+				if (e.childNodes[1].getAttribute("href").indexOf(".org") == -1) {
+					if (e.getAttribute("data-repost-of") !== null) {
+						id = e.getAttribute("data-repost-of");
+						price = e.getElementsByClassName("result-price")[0].innerText;
+						date = e.getElementsByTagName("time")[0].getAttribute("title");
+						title = e.getElementsByClassName("result-title hdrlnk")[0].innerText;
+						link = baseUrl + e.childNodes[1].getAttribute("href");
+					} else {
+						//orig id #, same logic
+						id = e.getAttribute("data-pid");
+						price = e.getElementsByClassName("result-price")[0].innerText;
+						date = e.getElementsByTagName("time")[0].getAttribute("title");
+						title = e.getElementsByClassName("result-title hdrlnk")[0].innerText;
+						link = baseUrl + e.childNodes[1].getAttribute("href");
+					}
+					pushToResults(id, title, price, city, date, link);
+					console.log(results)				
 				}
 			})
 		}
@@ -45,12 +53,11 @@ function ajaxCall() {
 	xhr.open("GET", url, true);
 	xhr.send(null);
 
-	pushToResults(id, title, price);
-	createView(results);
+	// createView(results);
 }
 
-function pushToResults(id, title, price) {
-	results.push({id: id, title: title, price: price}) //add more to this
+function pushToResults(id, title, price, city, date, link) {
+	results.push({id: id, title: title, price: price, city: city, date: date, link: link}) //add more to this
 }
 
 function createView(array) {
