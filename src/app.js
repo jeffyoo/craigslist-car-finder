@@ -1,4 +1,3 @@
-
 var xhr = new XMLHttpRequest();
 var parser = new DOMParser();
 
@@ -6,6 +5,24 @@ var baseUrl = "https://losangeles.craigslist.org";
 var url = "https://losangeles.craigslist.org/search/cta?query=nsx&srchType=T&bundleDuplicates=1&auto_transmission=1";
 
 var results = [];
+
+var columnDefs = [
+	{headerName: "Title", field: "title"},
+	{headerName: "Price", field: "price"},
+	{headerName: "City", field: "city"},
+	{headerName: "Date", field: "date"},
+	{headerName: "Link", field: "link"}
+]
+
+var gridOptions = {
+	columnDefs: columnDefs,
+	rowData: results,
+	enableSorting: true,
+	enableFilter: true,
+	onGridReady: function () {
+		gridOptions.api.sizeColumnsToFit();
+	}
+};
 
 function ajaxCall() {
 	xhr.onreadystatechange = function() {
@@ -45,21 +62,22 @@ function ajaxCall() {
 						link = baseUrl + e.childNodes[1].getAttribute("href");
 					}
 					pushToResults(id, title, price, city, date, link);
-					console.log(results)				
+									
 				}
 			})
+			createView(results);
 		}
 	};
 	xhr.open("GET", url, true);
 	xhr.send(null);
-
-	// createView(results);
 }
 
 function pushToResults(id, title, price, city, date, link) {
+	console.log('pushToResults')
 	results.push({id: id, title: title, price: price, city: city, date: date, link: link}) //add more to this
 }
 
 function createView(array) {
-	//iterate through results and create the view
+	var eGridDiv = document.querySelector('#myGrid');
+	new agGrid.Grid(eGridDiv, gridOptions);
 }
